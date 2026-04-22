@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Aplicação</title>
+</head>
+
+<body style="padding:20px">
+    <h1>Categorias</h1>
+    <a href="./">Voltar</a>
+
+    {% if cursor %}
+    {% if super_categoria %}
+    <h2>Sub-categorias da categoria {{ super_categoria }}</h2>
+    <h3>Inserir Sub-categoria</h3>
+    {% else %}
+    <h3>Inserir Categoria</h3>
+    {% endif %}
+
+    <form action="./categorias/adicionar" method="post">
+        <p>
+            Nova Categoria:
+            <input type="text" name="nome" />
+            <input type="radio" name="tipo" value="super" />Super Categoria
+            <input type="radio" name="tipo" value="simples" checked />Categoria Simples
+            {% if super_categoria %}
+            <input type="hidden" name="super_categoria" value="{{ super_categoria }}" />
+            {% endif %}
+        </p>
+        <p>
+            <input type="submit" value="Adicionar" />
+        </p>
+    </form>
+
+    <table border="2px">
+        <thead>
+            <tr></tr>
+            <th>Nome</th>
+            <th>Sub-categorias</th>
+            <th>Remover</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in cursor %}
+            <tr>
+                <td>{{ record[0] }}</td>
+                <td>
+                    {% if record[1] == "super" %}
+                    <a href="./categorias?super_categoria={{ record[0] }}">Consultar</a>
+                    {% endif %}
+                </td>
+                <td>
+                    <form action="./categorias/remover" method="post">
+                        <input type="hidden" name="nome" value="{{ record[0] }}" />
+                        <input type="submit" value="Remover" />
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p> Erro ao obter dados da base de dados!</p>
+    {% endif %}
+</body>
+
+</html>
